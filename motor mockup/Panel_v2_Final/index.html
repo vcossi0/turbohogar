@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nesting Industrial — TurboPrint</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="panel-root" id="panelRoot">
+
+    <!-- ═══════════ HEADER ═══════════ -->
+    <header class="panel-header">
+      <div class="logo">N</div>
+      <div>
+        <h1>Nesting Industrial</h1>
+      </div>
+      <span class="status-dot disconnected" id="statusDot"
+            data-tooltip="Servidor desconectado"></span>
+      <span class="version" id="versionTag">v1.0 CEP</span>
+    </header>
+
+    <!-- ═══════════ SETTINGS CARD ═══════════ -->
+    <section class="card fade-in" id="settingsCard">
+      <div class="card-title"><span class="icon">⚙️</span> Configuración</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="canvasWidth">Ancho Rollo (mm)</label>
+          <input type="number" id="canvasWidth" value="1200" min="10" step="1" />
+        </div>
+        <div class="form-group">
+          <label for="canvasHeight">Alto Bin (mm)</label>
+          <input type="number" id="canvasHeight" value="3000" min="10" step="1" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="margin">Margen Kerf (mm)</label>
+          <input type="number" id="margin" value="2" min="0" step="0.5" />
+        </div>
+        <div class="form-group">
+          <label for="packingMode">Modo</label>
+          <select id="packingMode">
+            <option value="strip" selected>Rollo Infinito</option>
+            <option value="bin">Retal Fijo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="maxTime">Tiempo máx. (seg)</label>
+          <input type="number" id="maxTime" value="30" min="1" max="300" step="1" />
+        </div>
+        <div class="form-group">
+          <label for="rotations">Rotaciones</label>
+          <select id="rotations">
+            <option value="0,90,180,270" selected>0° 90° 180° 270°</option>
+            <option value="0,90">0° 90°</option>
+            <option value="0">Solo 0°</option>
+            <option value="0,45,90,135,180,225,270,315">Cada 45°</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ ACTION BUTTONS ═══════════ -->
+    <div class="actions">
+      <button class="btn btn-secondary" id="btnValidate"
+              data-tooltip="Solo verifica errores">
+        🔍 Validar
+      </button>
+      <button class="btn btn-primary" id="btnNest">
+        🚀 Anidar
+      </button>
+    </div>
+
+    <!-- ═══════════ PROGRESS SECTION ═══════════ -->
+    <section class="progress-section" id="progressSection">
+      <!-- Tarjetas de progreso por color se insertan dinámicamente -->
+    </section>
+
+    <!-- ═══════════ RESULTS / REPORT ═══════════ -->
+    <section class="report-card hidden fade-in" id="reportCard">
+      <div class="card-title"><span class="icon">📊</span> Reporte y Previsualización</div>
+
+      <div class="report-stat">
+        <span class="label">Eficiencia Global</span>
+        <span class="value" id="rptEfficiency">—</span>
+      </div>
+      <div class="report-stat">
+        <span class="label">Rollo Optimizado</span>
+        <span class="value" id="rptOptimized">—</span>
+      </div>
+      <div class="report-stat">
+        <span class="label">Estimado Manual</span>
+        <span class="value" id="rptManual">—</span>
+      </div>
+      <div class="report-stat">
+        <span class="label">Material Ahorrado</span>
+        <span class="value good" id="rptSaved">—</span>
+      </div>
+
+      <div id="suggestionsArea"></div>
+
+      <!-- VISOR DE PREVISUALIZACIÓN -->
+      <div class="preview-container">
+        <div class="preview-header">
+          <label for="previewBinSelect">Ver Plancha:</label>
+          <select id="previewBinSelect" class="preview-select"></select>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="previewCanvas"></canvas>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full apply-btn" id="btnApply">
+        ✅ Aplicar al Lienzo
+      </button>
+    </section>
+
+    <!-- ═══════════ LOG ═══════════ -->
+    <div class="log-area" id="logArea">
+      <div class="log-line info">Panel CEP listo. Seleccione piezas en el lienzo.</div>
+    </div>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="panel-footer">
+      <span>TurboPrint © 2026</span>
+      <span id="pieceCount">0 piezas</span>
+    </footer>
+
+  </div>
+
+  <!-- CSInterface DEBE cargarse antes que main.js -->
+  <script src="CSInterface.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

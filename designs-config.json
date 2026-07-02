@@ -1,0 +1,109 @@
+{
+  "products": {
+    "cuadro_70x50_h": {
+      "name": "Cuadro 70×50 Horizontal",
+      "width_cm": 70,
+      "height_cm": 50,
+      "aspect_ratio": 1.4,
+      "orientation": "horizontal",
+      "dpi": 300,
+      "min_resolution": {
+        "width": 2800,
+        "height": 2000
+      },
+      "optimal_resolution": {
+        "width": 3500,
+        "height": 2500
+      },
+      "mockup": "mockup_horizontal.png",
+      "behavior": "centerbox"
+    },
+    "cuadro_50x70_v": {
+      "name": "Cuadro 50×70 Vertical",
+      "width_cm": 50,
+      "height_cm": 70,
+      "aspect_ratio": 0.714,
+      "orientation": "vertical",
+      "dpi": 300,
+      "min_resolution": {
+        "width": 2000,
+        "height": 2800
+      },
+      "optimal_resolution": {
+        "width": 2500,
+        "height": 3500
+      },
+      "mockup": "mockup_vertical.png",
+      "behavior": "centerbox"
+    },
+    "cuadro_40x30_h": {
+      "name": "Cuadro 40×30 Horizontal",
+      "width_cm": 40,
+      "height_cm": 30,
+      "aspect_ratio": 1.333,
+      "orientation": "horizontal",
+      "dpi": 300,
+      "min_resolution": {
+        "width": 1600,
+        "height": 1200
+      },
+      "optimal_resolution": {
+        "width": 2000,
+        "height": 1500
+      },
+      "mockup": "mockup_shared.png",
+      "behavior": "centerbox"
+    },
+    "cuadro_30x40_v": {
+      "name": "Cuadro 30×40 Vertical",
+      "width_cm": 30,
+      "height_cm": 40,
+      "aspect_ratio": 0.75,
+      "orientation": "vertical",
+      "dpi": 300,
+      "min_resolution": {
+        "width": 1200,
+        "height": 1600
+      },
+      "optimal_resolution": {
+        "width": 1500,
+        "height": 2000
+      },
+      "mockup": "mockup_shared.png",
+      "behavior": "centerbox"
+    }
+  },
+  "validation": {
+    "min_file_size_bytes": 50000,
+    "max_file_size_bytes": 50000000,
+    "acceptable_formats": ["png"],
+    "aspect_ratio_tolerance": 0.05,
+    "resolution_warning_threshold": 0.7,
+    "resolution_error_threshold": 0.5
+  },
+  "thumbnails": {
+    "gallery": {
+      "width": 300,
+      "height": 300,
+      "quality": 90
+    },
+    "admin": {
+      "width": 180,
+      "height": 180,
+      "quality": 85
+    }
+  },
+  "paths": {
+    "designs_folder": "designs",
+    "mockups_folder": "mockups",
+    "output_folder": "processed",
+    "report_file": "REPORT.json",
+    "summary_file": "SUMMARY.txt"
+  },
+  "processing": {
+    "parallel_workers": 4,
+    "skip_errors": true,
+    "generate_mockup_preview": false,
+    "preserve_original": true
+  }
+}

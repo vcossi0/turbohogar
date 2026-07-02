@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ExtensionManifest Version="7.0"
+  ExtensionBundleId="com.turboprint.nesting"
+  ExtensionBundleVersion="1.0.0"
+  ExtensionBundleName="Nesting Industrial">
+
+  <ExtensionList>
+    <Extension Id="com.turboprint.nesting.panel" Version="1.0.0" />
+  </ExtensionList>
+
+  <ExecutionEnvironment>
+    <HostList>
+      <!-- Illustrator 2020 (v24) → 2026 (v30) y futuras versiones -->
+      <Host Name="ILST" Version="[24.0,99.9]" />
+    </HostList>
+    <LocaleList>
+      <Locale Code="All" />
+    </LocaleList>
+    <RequiredRuntimeList>
+      <!-- CEP 9 = mínimo para Illustrator 2020 -->
+      <RequiredRuntime Name="CSXS" Version="9.0" />
+    </RequiredRuntimeList>
+  </ExecutionEnvironment>
+
+  <DispatchInfoList>
+    <Extension Id="com.turboprint.nesting.panel">
+      <DispatchInfo>
+        <Resources>
+          <MainPath>./index.html</MainPath>
+          <ScriptPath>./host.jsx</ScriptPath>
+          <CEFCommandLine>
+            <!-- Permite fetch() a localhost sin CORS -->
+            <Parameter>--disable-web-security</Parameter>
+            <Parameter>--allow-file-access-from-files</Parameter>
+          </CEFCommandLine>
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>Nesting Industrial</Menu>
+          <Geometry>
+            <Size>
+              <Height>700</Height>
+              <Width>360</Width>
+            </Size>
+            <MinSize>
+              <Height>500</Height>
+              <Width>300</Width>
+            </MinSize>
+            <MaxSize>
+              <Height>1200</Height>
+              <Width>600</Width>
+            </MaxSize>
+          </Geometry>
+          <Icons />
+        </UI>
+      </DispatchInfo>
+    </Extension>
+  </DispatchInfoList>
+
+</ExtensionManifest>

@@ -1,0 +1,36 @@
+{
+  "id": "com.turboprint.nesting",
+  "name": "Nesting Industrial",
+  "version": "1.0.0",
+  "main": "src/index.html",
+  "host": [
+    {
+      "app": "Illustrator",
+      "minVersion": "27.0"
+    }
+  ],
+  "manifestVersion": 5,
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "nestingPanel",
+      "label": {
+        "default": "Nesting Industrial"
+      },
+      "minimumSize": { "width": 320, "height": 500 },
+      "preferredDockedSize": { "width": 360, "height": 700 },
+      "preferredFloatingSize": { "width": 400, "height": 750 },
+      "icons": [
+        { "width": 23, "height": 23, "path": "icons/icon_light.png", "scale": [1, 2], "theme": ["lightest", "light"] },
+        { "width": 23, "height": 23, "path": "icons/icon_dark.png", "scale": [1, 2], "theme": ["dark", "darkest"] }
+      ]
+    }
+  ],
+  "requiredPermissions": {
+    "network": {
+      "domains": ["http://127.0.0.1", "http://localhost"]
+    },
+    "localFileSystem": "request",
+    "clipboard": "readAndWrite"
+  }
+}

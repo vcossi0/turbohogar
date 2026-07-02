@@ -1,0 +1,35 @@
+# Dependencias
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Entornos y secretos
+.env
+.env.local
+
+# Assets pesados y con licencia (fuera del repo a propósito)
+assets/
+designs/
+diseños/
+ordenado/
+processed/
+MONTAJES/
+*.psd
+*.psb
+designs.json
+*.webm
+*.gif
+*.mp4
+
+# Artefactos de análisis local
+graphify-out/
+
+# Sistema / editor
+.DS_Store
+.vscode/
+.idea/
+*.log
