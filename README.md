@@ -5,6 +5,10 @@ rubro de la impresión. Lo distintivo del proyecto no es la vitrina, sino el **m
 Photoshop** para generar mockups fotorrealistas a escala: un proceso por lotes recorrió **2.130 diseños** y
 produjo **6.390 mockups** (tres vistas por diseño).
 
+**▶ Demo en vivo:** https://vcossi0.github.io/turbohogar/ — muestra curada (~140 diseños de las 6 categorías)
+con mockups optimizados para web. El uploader corre en modo demo, ya que el motor de montaje requiere
+Photoshop local (ver más abajo).
+
 ## El motor de mockups
 
 Componer los cuadros por software puro se ve plano: la imagen queda pegada sin perspectiva ni sombra. Para

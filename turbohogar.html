@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TurboHogar — Productos personalizados</title>
+<title>TurboHogar — Productos personalizados</title><!-- nombre provisional; el título real se fija por JS desde BRAND -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1025,6 +1025,19 @@ function IMG(seed,w=600,h=600){
 }
 const CLP = n => "$"+n.toLocaleString('es-CL');
 
+// ── MARCA ─────────────────────────────────────────────────────────────
+// El cliente aún define el nombre final del producto. Cámbialo AQUÍ y se
+// propaga al logo, footer, título de pestaña y textos legales.
+// BRAND_A / BRAND_B son las dos mitades del logo (la primera lleva acento).
+const BRAND   = 'TurboHogar';
+const BRAND_A = 'TURBO';
+const BRAND_B = 'HOGAR';
+
+// ── FLAGS DE FUNCIONALIDAD ────────────────────────────────────────────
+// Generador de prompts con IA: desactivado por decisión del cliente.
+// Ponlo en true para reactivarlo (el código del generador sigue intacto).
+const ENABLE_AI_PROMPT = false;
+
 /* ---- Search helpers ---- */
 const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 // SEARCH_INDEX built lazily after DESIGNS is defined (see below)
@@ -1195,10 +1208,10 @@ function Toasts(){
 }
 
 /* ---------- Header ---------- */
-const NAV = [['home','Inicio'],['gallery','Diseños'],['howto','Cómo funciona'],['contact','Contacto']];
+const NAV = [['home','Inicio'],['gallery','Diseños'],['upload','Sube tu diseño'],['howto','Cómo funciona'],['contact','Contacto']];
 function Logo({onClick,size=20}){
   return <div className="logo pointer" style={{fontSize:size}} onClick={onClick}>
-    <span className="o">TURBO</span><span>HOGAR</span></div>;
+    <span className="o">{BRAND_A}</span><span>{BRAND_B}</span></div>;
 }
 function Header(){
   const {view,navigate,setDrawer,wishlist,setSearch,cartItems} = useStore();
@@ -1382,7 +1395,7 @@ function Footer(){
       </div>
       <div className="divider" style={{margin:'40px 0 24px'}}/>
       <div className="flex ic jb fwrap g3">
-        <p className="cap muted3">© 2026 TurboHogar. Todos los derechos reservados.</p>
+        <p className="cap muted3">© 2026 {BRAND}. Todos los derechos reservados.</p>
         <div style={{display:'flex',alignItems:'center',gap:8,marginTop:8}}>
           <img src="assets/mascota_vg.png" alt="Vlic"
             style={{width:24,height:24,objectFit:'contain',
@@ -1722,20 +1735,15 @@ function Home(){
 
       {/* Copy lado izquierdo */}
       <div style={{padding:'120px 64px 80px 72px',zIndex:2}}>
-        {/* Mascota + intro */}
-        <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:28}}>
-          <video autoPlay loop muted playsInline
-            style={{width:80,height:80,objectFit:'contain',display:'block',flexShrink:0,
-              filter:'drop-shadow(0 6px 16px rgba(27,42,74,.35))'}}>
-            <source src="assets/vigi.webm" type="video/webm"/>
-            <img src="assets/vigi.gif" alt="Vlic"/>
-          </video>
-          <div style={{background:'var(--surface)',borderRadius:'16px',
-            padding:'14px 20px',boxShadow:'0 4px 16px rgba(0,0,0,.08)',
-            border:'2px solid var(--accent)'}}>
-            <p style={{fontSize:13,fontWeight:800,color:'var(--accent)',marginBottom:4,letterSpacing:'-.01em'}}>Vlic</p>
-            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.5,margin:0}}>¡Hola! Soy tu asistente. Tengo 2.129 diseños y estoy listo para ayudarte 🎨</p>
-          </div>
+        {/* Eyebrow — señal de confianza (sin asistente) */}
+        <div style={{display:'inline-flex',alignItems:'center',gap:10,marginBottom:28,padding:'9px 16px',
+          background:'var(--surface)',border:'1px solid var(--line)',borderRadius:999,
+          boxShadow:'0 4px 16px rgba(0,0,0,.06)'}}>
+          <span style={{width:8,height:8,borderRadius:'50%',background:'var(--accent)',
+            boxShadow:'0 0 0 4px rgba(45,122,79,.15)',flexShrink:0}}/>
+          <span style={{fontSize:13,fontWeight:700,color:'var(--accent)',letterSpacing:'.01em'}}>
+            2.129 diseños listos · Entrega 24–48h en todo Chile
+          </span>
         </div>
         <h1 style={{fontSize:'clamp(38px,4.5vw,64px)',fontWeight:900,lineHeight:1.05,
           letterSpacing:'-.03em',color:'#0D0D0D',marginBottom:20}}>
@@ -1755,7 +1763,7 @@ function Home(){
             Ver diseños ↓
           </button>
           <button
-            onClick={()=>navigate('editor')}
+            onClick={()=>navigate('upload')}
             style={{background:'transparent',color:'var(--accent)',
               border:'1.5px solid var(--accent)',
               padding:'15px 28px',borderRadius:10,fontSize:15,fontWeight:600,cursor:'pointer',
@@ -1977,7 +1985,7 @@ function Home(){
           <p style={{fontSize:16,color:'rgba(255,255,255,.75)',lineHeight:1.65,marginBottom:32,maxWidth:380}}>
             Sube tu foto, visualiza el resultado en tiempo real y recíbelo en tu puerta en 24–48h.
           </p>
-          <button onClick={()=>navigate('editor')}
+          <button onClick={()=>navigate('upload')}
             style={{background:'#fff',color:'var(--accent)',border:'none',
               padding:'15px 30px',borderRadius:10,fontSize:15,fontWeight:700,cursor:'pointer',
               display:'inline-flex',alignItems:'center',gap:8,transition:'transform .15s'}}
@@ -2096,7 +2104,7 @@ function Home(){
             <button className="btn btn-primary btn-pill btn-xl" onClick={()=>navigate('gallery')}>
               <Icon n="sparkle" s={18}/>Ver diseños
             </button>
-            <button className="btn btn-ghost-line btn-pill btn-xl" onClick={()=>navigate('editor')}>
+            <button className="btn btn-ghost-line btn-pill btn-xl" onClick={()=>navigate('upload')}>
               <Icon n="upload" s={18}/>Sube tu foto
             </button>
           </div>
@@ -2249,15 +2257,13 @@ function _Catalog_DELETED(){
         <button className="muted small pointer" style={{textAlign:'center',padding:8}} onClick={clearAll}>Limpiar todo</button>
       </div>
       <div className="divider" style={{margin:'20px 0'}}/>
-      <div style={{textAlign:'center',padding:'16px 0'}}>
-        <video autoPlay loop muted playsInline
-          style={{width:72,height:72,objectFit:'contain',display:'block',margin:'0 auto 12px',
-            filter:'drop-shadow(0 4px 12px rgba(27,42,74,.25))'}}>
-          <source src="assets/vigi.webm" type="video/webm"/>
-          <img src="assets/vigi.gif" alt="Vlic"/>
-        </video>
+      <div style={{textAlign:'center',padding:'8px 0'}}>
+        <div style={{width:48,height:48,borderRadius:'50%',background:'var(--accent-soft)',
+          display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 12px'}}>
+          <Icon n="search" s={22} c="var(--accent)"/>
+        </div>
         <p style={{fontSize:12,fontWeight:700,color:'var(--accent)',marginBottom:6}}>¿Buscas algo en especial?</p>
-        <p style={{fontSize:11,color:'var(--text-3)',lineHeight:1.5,margin:0}}>Cuéntame qué diseño tienes en mente y te ayudaré a encontrarlo</p>
+        <p style={{fontSize:11,color:'var(--text-3)',lineHeight:1.5,margin:0}}>Usa el buscador (⌘K) o filtra por categoría para encontrar tu diseño</p>
       </div>
     </div>
   );
@@ -2484,14 +2490,12 @@ function Gallery(){
       </div>
     ) : (
       <div style={{textAlign:'center',padding:'80px 24px',background:'linear-gradient(135deg, var(--bg), var(--surface))',borderRadius:12,minHeight:'300px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-        <video autoPlay loop muted playsInline
-          style={{width:110,height:110,objectFit:'contain',display:'block',marginBottom:20,
-            filter:'drop-shadow(0 8px 20px rgba(27,42,74,.3))'}}>
-          <source src="assets/vigi.webm" type="video/webm"/>
-          <img src="assets/vigi.gif" alt="Vlic"/>
-        </video>
+        <div style={{width:96,height:96,borderRadius:'50%',background:'var(--accent-soft)',
+          display:'flex',alignItems:'center',justifyContent:'center',marginBottom:20}}>
+          <Icon n="search" s={40} c="var(--accent)"/>
+        </div>
         <h3 style={{fontSize:20,fontWeight:900,color:'var(--accent)',marginBottom:10,letterSpacing:'-.01em'}}>{rawQuery?`Sin resultados para "${rawQuery}"`:'No hay diseños en esta categoría'}</h3>
-        <p style={{fontSize:14,color:'var(--text)',lineHeight:1.6,maxWidth:280,marginBottom:24}}>Pero tienes 2.100+ opciones en otras categorías. ¿Exploramos juntos?</p>
+        <p style={{fontSize:14,color:'var(--text)',lineHeight:1.6,maxWidth:280,marginBottom:24}}>Pero tienes 2.100+ opciones en otras categorías. Prueba con otra búsqueda o explora el catálogo completo.</p>
         <button className="btn btn-primary" onClick={()=>{setCat('Todos');setRawQuery('');setQuery('');setOrient(null);}}><Icon n="grid" s={16}/>Ver todos los diseños</button>
       </div>
     )}
@@ -2517,7 +2521,7 @@ const TEXT_COLORS = ['#FFFFFF','#11131A','#FF6B35','#F59E0B','#22C55E','#EF4444'
 const MOTOR_URL = 'http://localhost:5000';
 
 function UploadPanel({productLabel, onValidated, orient}){
-  const [phase,setPhase]   = useState('prompt'); // prompt|upload
+  const [phase,setPhase]   = useState(ENABLE_AI_PROMPT ? 'prompt' : 'upload'); // prompt|upload
   const [state,setState]   = useState('idle'); // idle|drag|procesando|listo|error
   const [fileName,setFileName] = useState('');
   const [mockups,setMockups]   = useState([]);  // [{key,url}]
@@ -2531,8 +2535,6 @@ function UploadPanel({productLabel, onValidated, orient}){
   const [promptGen,setPromptGen] = useState('');
   const [copied,setCopied] = useState(false);
 
-  // Conversational flow with Vigi
-  const [vigiQuestion,setVigiQuestion] = useState('initial'); // initial|generating|uploading|done
 
   // Verificar si el servidor está activo al montar
   useEffect(()=>{
@@ -2606,77 +2608,10 @@ function UploadPanel({productLabel, onValidated, orient}){
   };
 
   return <div className="upl-split" style={{display:'flex',gap:0,height:'100%'}}>
-    <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" style={{display:'none'}} onChange={onPick}/>
+    <input ref={inputRef} type="file" accept="image/png,image/jpeg" style={{display:'none'}} onChange={onPick}/>
 
-    {/* VIGI CONVERSATIONAL PANEL — Lado izquierdo */}
-    <div className="upl-left" style={{width:'40%',background:'linear-gradient(135deg,rgba(34,197,94,.12) 0%,rgba(27,42,74,.04) 100%)',backdropFilter:'blur(12px)',padding:'24px 20px',display:'flex',flexDirection:'column',justifyContent:'center',gap:20,borderRight:'1px solid rgba(34,197,94,.15)',overflow:'auto'}}>
-      {/* ESTADO: Initial — Bienvenida */}
-      {vigiQuestion==='initial' && (
-        <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:28}}>
-          <div style={{position:'relative',width:'280px',height:'280px',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <div style={{position:'absolute',inset:0,background:'radial-gradient(circle,rgba(34,197,94,.2) 0%,transparent 70%)',borderRadius:'50%'}}/>
-            <video autoPlay loop muted playsInline style={{width:'260px',height:'260px',objectFit:'contain',filter:'drop-shadow(0 14px 36px rgba(34,197,94,.4))',animation:'float 4s ease-in-out infinite',position:'relative',zIndex:2}}>
-              <source src="assets/vigi.webm" type="video/webm"/>
-              <img src="assets/vigi.gif" alt="Vlic" style={{width:'260px',height:'260px'}}/>
-            </video>
-          </div>
-          <div style={{textAlign:'center',width:'100%'}}>
-            <p style={{fontSize:22,fontWeight:900,color:'var(--accent)',margin:'0 0 8px 0',letterSpacing:'-.01em'}}>Hola, soy Vlic 👋</p>
-            <p style={{fontSize:14,fontWeight:600,color:'var(--text)',margin:'0 0 20px 0',lineHeight:1.5}}>Te ayudaré a preparar tu diseño perfecto</p>
-          </div>
-          <div style={{display:'flex',flexDirection:'column',gap:10,width:'100%'}}>
-            <button onClick={()=>{setPhase('prompt');setVigiQuestion('generating');}}
-              style={{padding:'12px 14px',borderRadius:12,background:'linear-gradient(135deg,var(--accent) 0%,#2aa76f 100%)',color:'#fff',border:'none',cursor:'pointer',fontSize:12,fontWeight:800,transition:'all .2s',boxShadow:'0 8px 16px rgba(34,197,94,.25)'}}>
-              ✨ Usar IA para generar
-            </button>
-            <button onClick={()=>{setPhase('upload');setVigiQuestion('uploading');}}
-              style={{padding:'12px 14px',borderRadius:12,background:'rgba(255,255,255,.5)',color:'var(--text)',border:'1.5px solid rgba(27,42,74,.12)',cursor:'pointer',fontSize:12,fontWeight:700,transition:'all .2s'}}>
-              📸 Tengo mi diseño listo
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ESTADO: Generating — Crear prompt */}
-      {vigiQuestion==='generating' && (
-        <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24}}>
-          <div style={{position:'relative',width:'240px',height:'240px',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <div style={{position:'absolute',inset:0,background:'radial-gradient(circle,rgba(34,197,94,.15) 0%,transparent 70%)',borderRadius:'50%'}}/>
-            <img src="assets/vigi_prompt.gif" alt="Vlic generando" style={{width:'220px',height:'220px',objectFit:'contain',filter:'drop-shadow(0 10px 24px rgba(34,197,94,.25))',position:'relative',zIndex:2}}/>
-          </div>
-          <div style={{textAlign:'center',width:'100%'}}>
-            <p style={{fontSize:14,fontWeight:700,color:'var(--text)',margin:0,lineHeight:1.6}}>Voy a crear un prompt perfecto para ti</p>
-          </div>
-          <button onClick={()=>{setVigiQuestion('initial');setPromptGen('');}}
-            style={{padding:'11px 14px',borderRadius:12,background:'rgba(27,42,74,.04)',color:'var(--text)',border:'1px solid rgba(27,42,74,.1)',cursor:'pointer',fontSize:12,fontWeight:700,transition:'all .2s',width:'100%'}}>
-            ← Atrás
-          </button>
-        </div>
-      )}
-
-      {/* ESTADO: Uploading — Subir imagen */}
-      {vigiQuestion==='uploading' && (
-        <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:24}}>
-          <div style={{position:'relative',width:'280px',height:'280px',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <div style={{position:'absolute',inset:0,background:'radial-gradient(circle,rgba(34,197,94,.2) 0%,transparent 70%)',borderRadius:'50%'}}/>
-            <video autoPlay loop muted playsInline style={{width:'260px',height:'260px',objectFit:'contain',filter:'drop-shadow(0 14px 36px rgba(34,197,94,.4))',animation:'float 4s ease-in-out infinite',position:'relative',zIndex:2}}>
-              <source src="assets/vigi.webm" type="video/webm"/>
-              <img src="assets/vigi.gif" alt="Vlic" style={{width:'260px',height:'260px'}}/>
-            </video>
-          </div>
-          <div style={{textAlign:'center',width:'100%'}}>
-            <p style={{fontSize:14,fontWeight:700,color:'var(--text)',margin:0,lineHeight:1.6}}>Sube tu diseño y lo procesaremos al instante</p>
-          </div>
-          <button onClick={()=>{setVigiQuestion('initial');}}
-            style={{padding:'11px 14px',borderRadius:12,background:'rgba(27,42,74,.04)',color:'var(--text)',border:'1px solid rgba(27,42,74,.1)',cursor:'pointer',fontSize:12,fontWeight:700,transition:'all .2s',width:'100%'}}>
-            ← Atrás
-          </button>
-        </div>
-      )}
-    </div>
-
-    {/* CONTENT PANEL — Derecha */}
-    <div className="upl-right" style={{width:'60%',overflow:'auto',padding:'20px'}}>
+    {/* CONTENT PANEL — ancho completo (panel conversacional eliminado) */}
+    <div className="upl-right" style={{width:'100%',overflow:'auto',padding:'20px'}}>
     {/* FASE 1: PROMPT GENERATOR */}
     {phase==='prompt' && (
     <div>
@@ -2688,7 +2623,7 @@ function UploadPanel({productLabel, onValidated, orient}){
           <span style={{fontSize:28,lineHeight:1,flexShrink:0,filter:'drop-shadow(0 2px 8px rgba(34,197,94,.25))',animation:'bounce 3s ease-in-out infinite'}}>✨</span>
           <div style={{flex:1,minWidth:0}}>
             <p style={{fontSize:15,fontWeight:800,color:'var(--accent)',marginBottom:6,letterSpacing:'-0.02em'}}>Diseña con IA</p>
-            <p style={{fontSize:13,color:'var(--text-3)',lineHeight:1.7,margin:0,fontWeight:400}}>Describe tu idea. Vlic crea un prompt optimizado para DALL-E, Midjourney o Stable Diffusion.</p>
+            <p style={{fontSize:13,color:'var(--text-3)',lineHeight:1.7,margin:0,fontWeight:400}}>Describe tu idea y genera un prompt optimizado para DALL·E, Midjourney o Stable Diffusion.</p>
           </div>
         </div>
       </div>
@@ -2807,11 +2742,13 @@ function UploadPanel({productLabel, onValidated, orient}){
     {/* FASE 2: UPLOAD */}
     {phase==='upload' && (
     <div>
-      {/* Botón volver a generar — Premium ghost button */}
+      {/* Botón volver a generar — solo si el generador IA está activo */}
+      {ENABLE_AI_PROMPT && (
       <button onClick={()=>setPhase('prompt')}
         style={{width:'100%',padding:'11px 16px',borderRadius:10,background:'rgba(27,42,74,.04)',color:'var(--text-3)',border:'1px solid rgba(27,42,74,.08)',cursor:'pointer',fontSize:12,fontWeight:700,marginBottom:16,transition:'all .18s'}}>
         ← Generar otro prompt
       </button>
+      )}
 
       {/* Estado del motor — activo */}
       {motorOk===true && <div style={{background:'rgba(45,122,79,.1)',border:'1px solid rgba(45,122,79,.3)',borderRadius:8,padding:'8px 14px',marginBottom:12,fontSize:12,color:'var(--success)',display:'flex',gap:8,alignItems:'center'}}>
@@ -2832,7 +2769,7 @@ function UploadPanel({productLabel, onValidated, orient}){
           <button className="btn btn-primary btn-block" onClick={()=>inputRef.current&&inputRef.current.click()}>
             <Icon n="upload" s={16}/>Subir imagen (modo demo)
           </button>
-          <p className="cap muted" style={{marginTop:12}}>PNG, JPG o WEBP · máx. 20 MB · vista previa sin mockups HD</p>
+          <p className="cap muted" style={{marginTop:12}}>PNG (recomendado) o JPG en alta calidad · máx. 20 MB · vista previa sin mockups HD</p>
         </div>
       )}
 
@@ -2849,7 +2786,7 @@ function UploadPanel({productLabel, onValidated, orient}){
         <button className="btn btn-outline" onClick={e=>{e.stopPropagation();inputRef.current&&inputRef.current.click();}}>
           <Icon n="image" s={16}/>Seleccionar imagen
         </button>
-        <p className="cap muted" style={{marginTop:16}}>PNG, JPG o WEBP · máx. 20 MB</p>
+        <p className="cap muted" style={{marginTop:16}}>PNG (recomendado) o JPG en alta calidad · máx. 20 MB</p>
       </div>
       )}
     </div>
@@ -3079,12 +3016,12 @@ function MockupPreview({design, orient, zoom=1, rot=0, active=0}){
       <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',
         flexDirection:'column',gap:0,padding:'40px 24px',
         background:'linear-gradient(135deg, var(--bg) 0%, var(--surface) 100%)'}}>
-        <video autoPlay loop muted playsInline
-          style={{width:130,height:130,objectFit:'contain',display:'block',marginBottom:16,
-            filter:'drop-shadow(0 12px 32px rgba(27,42,74,.4))'}}>
-          <source src="assets/vigi.webm" type="video/webm"/>
-          <img src="assets/vigi.gif" alt="Vlic"/>
-        </video>
+        <div style={{width:88,height:88,borderRadius:'50%',background:'var(--accent-soft)',
+          display:'flex',alignItems:'center',justifyContent:'center',marginBottom:16}}>
+          <Icon n="image" s={38} c="var(--accent)"/>
+        </div>
+        <p style={{fontSize:14,fontWeight:700,color:'var(--text-2)',margin:0}}>Elige un diseño o sube tu imagen</p>
+        <p style={{fontSize:12,color:'var(--text-3)',marginTop:6,textAlign:'center'}}>Aquí verás la vista previa de tu cuadro</p>
       </div>
     );
   }
@@ -3657,14 +3594,12 @@ function Cart(){
 
   if(!cartItems.length) return <div className="page wrap" style={{paddingTop:96,paddingBottom:80,minHeight:'70vh',display:'flex',alignItems:'center',justifyContent:'center'}}>
     <div className="tc" style={{maxWidth:480}}>
-      <video autoPlay loop muted playsInline
-        style={{width:100,height:100,objectFit:'contain',display:'block',margin:'0 auto 20px',
-          filter:'drop-shadow(0 8px 20px rgba(27,42,74,.3))'}}>
-        <source src="assets/vigi.webm" type="video/webm"/>
-        <img src="assets/vigi.gif" alt="Vlic"/>
-      </video>
+      <div style={{width:96,height:96,borderRadius:'50%',background:'var(--accent-soft)',
+        display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 20px'}}>
+        <Icon n="cart" s={40} c="var(--accent)"/>
+      </div>
       <h2 className="h2" style={{marginBottom:12,color:'var(--accent)'}}>Tu carrito está vacío</h2>
-      <p className="muted" style={{marginBottom:10,lineHeight:1.6}}>Pero no te preocupes, tengo <strong style={{color:'var(--accent)',fontWeight:700}}>2.129 diseños increíbles</strong> esperando por ti.</p>
+      <p className="muted" style={{marginBottom:10,lineHeight:1.6}}>Pero no te preocupes: hay <strong style={{color:'var(--accent)',fontWeight:700}}>2.129 diseños increíbles</strong> esperando por ti.</p>
       <p className="small" style={{color:'var(--text-3)',marginBottom:28}}>✨ Elige uno del catálogo o sube tu propia foto</p>
       <button className="btn btn-primary btn-lg" onClick={()=>navigate('gallery')}><Icon n="grid" s={17}/>Explorar diseños</button>
     </div>
@@ -4151,7 +4086,7 @@ function About(){
         <div>
           <h2 className="h2" style={{marginBottom:18}}>Nuestra historia</h2>
           <p className="muted" style={{lineHeight:1.8,marginBottom:16}}>
-            TURBOHOGAR nació en 2021 con una idea simple: que cualquier persona pudiera transformar un recuerdo en un objeto bonito, sin complicaciones ni mínimos de compra.</p>
+            {BRAND} nació en 2021 con una idea simple: que cualquier persona pudiera transformar un recuerdo en un objeto bonito, sin complicaciones ni mínimos de compra.</p>
           <p className="muted" style={{lineHeight:1.8,marginBottom:16}}>
             Empezamos con una sola impresora en un taller de Providencia. Hoy producimos miles de piezas al mes, pero mantenemos la misma obsesión por el detalle: cada cuadro se revisa a mano antes de salir.</p>
           <p className="muted" style={{lineHeight:1.8}}>
@@ -4263,171 +4198,153 @@ function Contact(){
   </div>;
 }
 
-/* ============================================================
-   APP ROOT
-============================================================ */
-/* ── MASCOTA FLOTANTE VLIC ── */
-const MASCOTA_GIF = 'assets/vigi.gif';
-const MASCOTA_PNG = 'assets/mascota_vg.png';
-const MASCOTA = MASCOTA_GIF; // usar GIF animado
-
-const MENSAJES = [
-  '👋 ¡Hola! Soy Vlic, tu asistente personal de Vlic. ¿En qué te ayudo?',
-  '⚡ 2.129 diseños listos → Marvel, DC, Funko, Juegos y más',
-  '📸 ¿Tu foto favorita? La convierto en cuadro HD en 24-48h',
-  '🎨 Personaliza tu espacio con arte que refleje tu estilo',
-  '🚀 Tendencia: Cuadros grandes + impresión premium = impacto total',
-  '✨ V.I.P. Recomendación: Explora nuestros TOP diseños destacados 👇',
-];
-
-function FloatingMascot({view}){
-  if(view !== 'gallery') return null;
+/* ---------- Página: Sube tu diseño ---------- */
+function Upload(){
   const {navigate} = useStore();
-  const [open, setOpen] = useState(false);
-  const [msgIdx, setMsgIdx] = useState(0);
-  const [showBubble, setShowBubble] = useState(false);
-  const [catFilter, setCatFilter] = useState('');
+  const [orient,setOrient] = useState('vertical');
+  const variantLabel = `Cuadro ${orient==='vertical'?'50×70 Vertical':'70×50 Horizontal'}`;
 
-  // Mostrar burbuja de bienvenida automáticamente tras 3s
-  useEffect(()=>{
-    const t = setTimeout(()=>setShowBubble(true), 3000);
-    return ()=>clearTimeout(t);
-  },[]);
+  // Muestras del catálogo para el collage del hero
+  const samples = useMemo(()=>(DESIGNS||[]).filter(d=>d.mock&&d.mock.comun).slice(0,4),[]);
 
-  const filtered = catFilter && catFilter !== 'Todos'
-    ? DESIGNS.filter(d=>d.cat && d.cat.toUpperCase().includes(catFilter.toUpperCase())).slice(0,6)
-    : DESIGNS.slice(0,6);
-
-  const toggle = ()=>{
-    setOpen(o=>!o);
-    setShowBubble(false);
-    setMsgIdx(i=>(i+1)%MENSAJES.length);
+  // Al validar la imagen construimos un diseño virtual y pasamos al editor
+  // (reutiliza el flujo de tamaño + carrito ya existente).
+  const goEditor = (primaryUrl, allMockups)=>{
+    const keys = allMockups || [{key:'comun', url:primaryUrl}];
+    const mock = {};
+    keys.forEach((m,i)=>{ mock[i===0?'comun':i===1?'a':'b'] = m.url; });
+    const virtual = {
+      id:'upload_'+Date.now(), name:'Tu diseño', n:'Tu diseño',
+      cat:'Mi diseño', c:'Mi diseño', orient, mock,
+    };
+    navigate('editor', {design: virtual, orientation: orient});
   };
 
-  const CATEGORIAS = [
-    {label:'🏞️ Paisaje', key:'paisaje', eng:'majestic landscape, breathtaking scenery'},
-    {label:'🖼️ Retrato', key:'retrato', eng:'detailed portrait, expressive face, emotional depth'},
-    {label:'🎭 Personaje', key:'personaje', eng:'full body character illustration, dynamic pose'},
-    {label:'🌀 Abstracto', key:'abstracto', eng:'abstract composition, flowing forms, color explosion'},
+  const pasos = [
+    ['upload','Sube tu imagen'],
+    ['image','Previsualiza'],
+    ['truck','Recíbela en 24–48h'],
   ];
-  const ESTILOS = [
-    {label:'Realista', eng:'photorealistic, hyperdetailed, 8K, professional photography'},
-    {label:'Anime', eng:'anime style, cel shading, vivid colors, manga inspired'},
-    {label:'Digital Art', eng:'digital painting, concept art, artstation trending'},
-    {label:'Fotografía', eng:'DSLR photo, bokeh, natural lighting, award winning'},
-    {label:'Acuarela', eng:'watercolor painting, soft brushstrokes, pastel palette'},
+  const reqs = [
+    ['image','Formato','PNG (recomendado) o JPG en alta calidad. Evita WebP y capturas de pantalla.'],
+    ['maximize','Resolución','Mínimo 2000 px en el lado largo. Ideal 3000 px o más para nitidez.'],
+    ['layout','Orientación','Elígela antes de subir: define el formato del cuadro.'],
+    ['package','Peso','Hasta 20 MB por imagen.'],
   ];
+  const label = {fontSize:12,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase',color:'var(--text-3)',marginBottom:12};
 
-  // NOTA: se eliminó código muerto (generarPrompt/copyPrompt) que referenciaba
-  // estado inexistente (genCat/genEstilo/genIdea/genPrompt/setGenStep). No se
-  // usaba en el render del panel, pero era un landmine si se conectaba a un botón.
+  return <div className="page">
 
-  return <>
-    {/* Burbuja de bienvenida — más prominente */}
-    {showBubble && !open && (
-      <div className="vg-bubble" style={{
-        cursor:'pointer',
-        background:'linear-gradient(135deg, var(--bg) 0%, var(--surface) 100%)',
-        border:'2px solid var(--accent)',
-        boxShadow:'0 8px 32px rgba(27,42,74,.25), 0 0 0 1px rgba(27,42,74,.1)',
-        animation:'slideUp .3s ease-out'
-      }} onClick={toggle}>
-        <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
-          <span style={{fontSize:28,lineHeight:1,flexShrink:0}}>🎨</span>
-          <div style={{flex:1}}>
-            <p style={{fontSize:14,fontWeight:700,color:'var(--accent)',lineHeight:1.3,margin:'0 0 6px 0'}}>
-              ¡Hola! Soy Vlic
-            </p>
-            <p style={{fontSize:12,fontWeight:500,color:'var(--text)',lineHeight:1.5,margin:0}}>
-              {MENSAJES[0]}
-            </p>
-          </div>
-        </div>
-        <div style={{marginTop:12,height:2,borderRadius:999,
-          background:'linear-gradient(90deg,var(--accent),var(--accent-2))'}}/>
-        <p style={{fontSize:11,color:'var(--text-3)',marginTop:8,marginBottom:0,fontWeight:500}}>
-          👆 Toca para explorar
-        </p>
-        <button onClick={e=>{e.stopPropagation();setShowBubble(false);}}
-          style={{position:'absolute',top:12,right:12,background:'none',border:'none',
-            fontSize:18,cursor:'pointer',color:'var(--text-3)',lineHeight:1,opacity:0.6}}>×</button>
-      </div>
-    )}
-
-    {/* Panel expandido — Multi-tab */}
-    {open && (
-      <div className="vg-panel">
-        {/* Header Premium */}
-        <div className="vg-hdr">
-          <div className="vg-hdr-info">
-            <p className="vg-hdr-name">Explorar Diseños</p>
-            <div className="vg-hdr-badge">
-              <span className="vg-hdr-dot"/>
-              <p className="vg-hdr-label">Elige tu fandom favorito</p>
-            </div>
-          </div>
-          <button className="vg-hdr-close" onClick={toggle}>×</button>
-        </div>
-
-
-        {/* Body — Panel lineal de conversión */}
-        <div className="vg-body">
-          {/* 1. Tagline */}
-          <p className="vg-tagline">¿Qué fandom llevas en el corazón?</p>
-
-          {/* 2. Filtro de categorías */}
-          <div className="vg-cat-scroll">
-            <button className={`vg-cat-pill${!catFilter?' on':''}`} onClick={()=>setCatFilter('')}>Todos</button>
-            {CATS.filter(c=>c!=='Todos').map(c=><button key={c} className={`vg-cat-pill${catFilter===c?' on':''}`} onClick={()=>setCatFilter(c)}>{c}</button>)}
-          </div>
-
-          {/* 3. Grid de diseños filtrado */}
-          <div className="vg-grid">
-            {filtered.map(d=>(
-              <div key={d.id} className="vg-card" onClick={()=>{navigate('gallery');toggle();}}>
-                <img src={d.mock?.comun || d.art || 'assets/mock/batman_h1.png'} alt={d.name}/>
-                <div className="vg-card-name">{d.name}</div>
+    {/* ── HERO — banda marina, mismo lenguaje que "Sube tu foto" ── */}
+    <section style={{background:'var(--accent)',position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',inset:0,opacity:.06,pointerEvents:'none',
+        backgroundImage:'radial-gradient(circle at 20% 40%, #fff 1px, transparent 1px)',backgroundSize:'32px 32px'}}/>
+      <div className="wrap" style={{padding:'128px 0 80px',display:'grid',gridTemplateColumns:'1.1fr .9fr',
+        gap:56,alignItems:'center',position:'relative'}}>
+        <div>
+          <span className="eyebrow" style={{color:'rgba(255,255,255,.55)',display:'block',marginBottom:18}}>Tu imagen, tu cuadro</span>
+          <h1 className="h1" style={{color:'#fff',marginBottom:20}}>Sube tu diseño<br/>y hazlo cuadro.</h1>
+          <p style={{fontSize:17,color:'rgba(255,255,255,.78)',lineHeight:1.65,maxWidth:440,marginBottom:34}}>
+            Convierte tu propia foto o ilustración en un cuadro premium. Sin mínimos, impresión HD y entrega en 24–48h a todo Chile.
+          </p>
+          <div style={{display:'flex',flexWrap:'wrap',gap:10}}>
+            {pasos.map((s,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'9px 15px',borderRadius:'var(--r-pill)',
+                background:'rgba(255,255,255,.1)',border:'1px solid rgba(255,255,255,.18)'}}>
+                <span style={{fontSize:11,fontWeight:800,color:'rgba(255,255,255,.5)'}}>{i+1}</span>
+                <Icon n={s[0]} s={15} c="#fff"/>
+                <span style={{fontSize:13,fontWeight:700,color:'#fff'}}>{s[1]}</span>
               </div>
             ))}
           </div>
+        </div>
+        {/* Collage de muestras */}
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          {samples.map((d,i)=>(
+            <div key={d.id} style={{borderRadius:14,overflow:'hidden',
+              aspectRatio:i%2===0?'3/4':'1',boxShadow:'0 16px 44px rgba(0,0,0,.3)'}}>
+              <img src={d.mock.comun} alt="" loading="lazy" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
 
-          {/* 4. Price strip siempre visible */}
-          <div className="vg-price-strip">
-            <div className="vg-price-item"><span>50×70 cm</span><strong>$24.990</strong></div>
-            <div className="vg-divider"/>
-            <div className="vg-price-item"><span>30×40 cm</span><strong>$14.990</strong></div>
+    {/* ── HERRAMIENTA — orientación + uploader + requisitos ── */}
+    <section className="wrap" style={{padding:'64px 0 80px'}}>
+      <div className="upl-page-grid" style={{display:'grid',gridTemplateColumns:'minmax(0,1.55fr) minmax(0,1fr)',gap:28,alignItems:'start'}}>
+
+        {/* Izquierda: orientación + uploader */}
+        <div>
+          <p style={label}>Paso 1 · Orientación del cuadro</p>
+          <div style={{display:'flex',gap:12,marginBottom:26}}>
+            {[['vertical','Vertical','50×70 / 30×40 cm',15,21],['horizontal','Horizontal','70×50 / 40×30 cm',21,15]].map(([k,l,sz,w,h])=>{
+              const on = orient===k;
+              return <button key={k} onClick={()=>setOrient(k)}
+                style={{flex:1,padding:'16px 18px',borderRadius:'var(--r-card)',cursor:'pointer',textAlign:'left',
+                  border:'1.5px solid '+(on?'var(--accent)':'var(--line-2)'),
+                  background:on?'var(--accent-soft)':'var(--surface)',
+                  boxShadow:on?'0 6px 20px rgba(27,42,74,.12)':'none',transition:'all .18s var(--ease)'}}>
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+                  <span style={{width:w,height:h,border:'2px solid '+(on?'var(--accent)':'var(--text-3)'),borderRadius:3,flexShrink:0}}/>
+                  <span style={{fontWeight:800,fontSize:15,color:on?'var(--accent)':'var(--text)'}}>{l}</span>
+                </div>
+                <span className="cap muted">{sz}</span>
+              </button>;
+            })}
           </div>
 
-          {/* 5. CTAs jerárquicas */}
-          <button className="vg-cta-primary" onClick={()=>{navigate('gallery');toggle();}}>Ver galería completa →</button>
-          <button className="vg-cta-secondary" onClick={()=>{navigate('editor');toggle();}}>📸 Subir mi foto</button>
+          <p style={label}>Paso 2 · Sube tu imagen</p>
+          <div className="card" style={{padding:0,overflow:'hidden',minHeight:360}}>
+            <UploadPanel productLabel={variantLabel} orient={orient} onValidated={goEditor}/>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div style={{padding:'8px 18px 10px',borderTop:'1px solid var(--line)',display:'flex',alignItems:'center',justifyContent:'center',gap:6,fontSize:10,color:'var(--text-3)',flexShrink:0}}><span>Powered by</span><span style={{fontWeight:800,color:'var(--accent)',letterSpacing:'.06em'}}>VLIC</span></div>
+        {/* Derecha: requisitos */}
+        <aside>
+          <div className="card" style={{padding:'24px 22px'}}>
+            <h3 style={{fontSize:17,fontWeight:800,marginBottom:4}}>Requisitos de la imagen</h3>
+            <p className="small muted" style={{marginBottom:18,lineHeight:1.5}}>Para que el cuadro se imprima nítido, cuida estos puntos.</p>
+            <div style={{display:'flex',flexDirection:'column',gap:16}}>
+              {reqs.map((r,i)=>(
+                <div key={i} style={{display:'flex',gap:13,alignItems:'flex-start'}}>
+                  <span style={{width:38,height:38,borderRadius:10,background:'var(--accent-soft)',flexShrink:0,
+                    display:'flex',alignItems:'center',justifyContent:'center'}}>
+                    <Icon n={r[0]} s={18} c="var(--accent)"/>
+                  </span>
+                  <div>
+                    <p style={{fontSize:13.5,fontWeight:800,marginBottom:2}}>{r[1]}</p>
+                    <p className="small muted" style={{lineHeight:1.5}}>{r[2]}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{marginTop:20,padding:'14px 16px',borderRadius:'var(--r-btn)',
+              background:'var(--accent)',color:'#fff'}}>
+              <p style={{fontSize:13,fontWeight:700,marginBottom:4}}>¿Dudas con tu imagen?</p>
+              <p style={{fontSize:12.5,color:'rgba(255,255,255,.8)',lineHeight:1.55,marginBottom:12}}>
+                Escríbenos y revisamos si tu foto rinde bien en el tamaño que quieres.
+              </p>
+              <button className="btn btn-sm" style={{background:'#fff',color:'var(--accent)',fontWeight:800}}
+                onClick={()=>navigate('contact')}>Contáctanos</button>
+            </div>
+          </div>
+        </aside>
       </div>
-    )}
-
-    {/* Mascota — isla flotante libre con transparencia real */}
-    <div className="vg-wrap">
-      <button className="vg-btn" onClick={toggle} title="¡Hola! Soy Vlic, tu asistente Vlic">
-        <video autoPlay loop muted playsInline
-          style={{width:180,height:180,objectFit:'contain',display:'block'}}>
-          <source src="assets/vigi.webm" type="video/webm"/>
-          <img src="assets/vigi.gif" alt="Vlic — Asistente Vlic"/>
-        </video>
-        <div style={{position:'absolute',bottom:-8,left:'50%',transform:'translateX(-50%)',width:'100%',height:30,background:'radial-gradient(ellipse at center, rgba(0,0,0,.15) 0%, transparent 70%)',borderRadius:'50%'}}/>
-      </button>
-    </div>
-  </>;
+    </section>
+  </div>;
 }
 
+/* ============================================================
+   APP ROOT
+============================================================ */
 function App(){
   const {view,setSearch} = useStore();
   const isFull = view==='editor' || view==='admin';
-  const VIEWS={home:Home,gallery:Gallery,editor:Editor,cart:Cart,checkout:Checkout,confirm:Confirm,wishlist:Wishlist,about:About,contact:Contact,admin:Admin};
+  const VIEWS={home:Home,gallery:Gallery,upload:Upload,editor:Editor,cart:Cart,checkout:Checkout,confirm:Confirm,wishlist:Wishlist,about:About,contact:Contact,admin:Admin};
   const Current = VIEWS[view]||Home;
   useEffect(()=>{
+    document.title = BRAND + ' — Cuadros personalizados';
     const onKey=e=>{ if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();setSearch(true);} };
     window.addEventListener('keydown',onKey); return ()=>window.removeEventListener('keydown',onKey);
   },[]);
@@ -4438,7 +4355,6 @@ function App(){
     <Drawer/>
     <SearchOverlay/>
     <Toasts/>
-    <FloatingMascot view={view}/>
   </>;
 }
 
@@ -5148,18 +5064,18 @@ function AdminUpload({cats}){
 
 /* ---------- Analítica ---------- */
 function AdminAnalytics(){
-  const vigiMetrics={
-    ventasVigi: 487,
-    ingresoVigi: 12156300,
-    conversionVigi: 5.2,
-    topByVigi: [
+  const adsMetrics={
+    ventasAds: 487,
+    ingresoAds: 12156300,
+    conversionAds: 5.2,
+    topAds: [
       {n:'Batman Dark Knight',ventas:84,ing:2100000,seed:'d1'},
       {n:'Marvel Avengers',ventas:72,ing:1800000,seed:'d2'},
       {n:'Funko Pop Squad',ventas:58,ing:1450000,seed:'d3'},
     ]
   };
   const totalVentas = 1284;
-  const pctVigi = Math.round(vigiMetrics.ventasVigi/totalVentas*100);
+  const pctAds = Math.round(adsMetrics.ventasAds/totalVentas*100);
 
   return <div className="flex col g4">
     <div className="adm-kpis">
@@ -5169,28 +5085,28 @@ function AdminAnalytics(){
       <KpiCard label="Devoluciones" value="1.2%" delta="0.3%" up={false} spark={[2,1.8,1.6,1.5,1.4,1.3,1.3,1.2]} color="#EF4444"/>
     </div>
 
-    {/* Vlic Analytics */}
+    {/* Analítica de campañas de publicidad */}
     <div className="card" style={{padding:'22px',background:'linear-gradient(135deg, rgba(45,122,79,.08), rgba(27,42,74,.06))',border:'1px solid rgba(45,122,79,.25)',borderLeft:'4px solid var(--success)'}}>
       <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
-        <div style={{fontSize:28}}>🎨</div>
+        <div style={{fontSize:28}}>🎯</div>
         <div>
-          <h3 style={{fontWeight:900,fontSize:18,color:'var(--success)',letterSpacing:'-.01em'}}>Vlic Analytics</h3>
-          <p className="cap muted">Ventas por publicidad dirigida — Vlic mascota</p>
+          <h3 style={{fontWeight:900,fontSize:18,color:'var(--success)',letterSpacing:'-.01em'}}>Publicidad dirigida</h3>
+          <p className="cap muted">Ventas atribuidas a campañas de publicidad</p>
         </div>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:12}}>
         <div style={{background:'rgba(255,255,255,.5)',borderRadius:10,padding:12}}>
-          <p className="cap muted" style={{marginBottom:4}}>Ventas (Vlic)</p>
-          <p style={{fontSize:22,fontWeight:800}}>{vigiMetrics.ventasVigi}</p>
-          <p className="cap muted" style={{marginTop:2}}>({pctVigi}% del total)</p>
+          <p className="cap muted" style={{marginBottom:4}}>Ventas (Ads)</p>
+          <p style={{fontSize:22,fontWeight:800}}>{adsMetrics.ventasAds}</p>
+          <p className="cap muted" style={{marginTop:2}}>({pctAds}% del total)</p>
         </div>
         <div style={{background:'rgba(255,255,255,.5)',borderRadius:10,padding:12}}>
-          <p className="cap muted" style={{marginBottom:4}}>Ingresos (Vlic)</p>
-          <p style={{fontSize:22,fontWeight:800}}>{CLP(vigiMetrics.ingresoVigi)}</p>
+          <p className="cap muted" style={{marginBottom:4}}>Ingresos (Ads)</p>
+          <p style={{fontSize:22,fontWeight:800}}>{CLP(adsMetrics.ingresoAds)}</p>
         </div>
         <div style={{background:'rgba(255,255,255,.5)',borderRadius:10,padding:12}}>
           <p className="cap muted" style={{marginBottom:4}}>Conversión</p>
-          <p style={{fontSize:22,fontWeight:800}}>{vigiMetrics.conversionVigi}%</p>
+          <p style={{fontSize:22,fontWeight:800}}>{adsMetrics.conversionAds}%</p>
         </div>
       </div>
     </div>
@@ -5211,17 +5127,17 @@ function AdminAnalytics(){
       </div>
     </div>
 
-    {/* Top diseños por Vigi */}
+    {/* Top diseños en campañas */}
     <div className="card" style={{padding:22}}>
-      <h3 style={{fontWeight:700,fontSize:16,marginBottom:16}}>🎨 Top diseños recomendados por Vlic</h3>
+      <h3 style={{fontWeight:700,fontSize:16,marginBottom:16}}>🎯 Top diseños en campañas de publicidad</h3>
       <div className="flex col g3">
-        {vigiMetrics.topByVigi.map((d,i)=>(
+        {adsMetrics.topAds.map((d,i)=>(
           <div key={d.n} className="flex ic g3">
             <span style={{fontWeight:800,color:'var(--accent)',width:18}}>{i+1}</span>
             <img src={IMG(d.seed,80,80)} alt="" style={{width:36,height:36,borderRadius:6,flex:'none',objectFit:'cover'}}/>
             <div className="fx" style={{minWidth:0}}>
               <div className="flex ic jb" style={{marginBottom:4}}><span className="small" style={{fontWeight:700}}>{d.n}</span><span className="cap muted">{d.ventas} ventas</span></div>
-              <div className="bar-track" style={{height:5}}><div className="bar-fill" style={{background:'var(--success)',width:(d.ventas/vigiMetrics.topByVigi[0].ventas*100)+'%'}}/></div>
+              <div className="bar-track" style={{height:5}}><div className="bar-fill" style={{background:'var(--success)',width:(d.ventas/adsMetrics.topAds[0].ventas*100)+'%'}}/></div>
             </div>
           </div>
         ))}
