@@ -933,6 +933,66 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
   }
   .spin{animation:rot 1.2s linear infinite !important;border-top-color:var(--accent)}
 }
+
+/* ============================================================
+   RESPONSIVE MOBILE — home sections (inline-style overrides)
+============================================================ */
+
+/* Hero: la sección usa inline gridTemplateColumns; los breakpoints apuntan a la clase */
+.hero-split{display:grid;grid-template-columns:1fr 1fr;align-items:center}
+@media(max-width:768px){
+  .hero-split{grid-template-columns:1fr !important;min-height:auto !important}
+  .hero-imgs{display:none !important}
+  .hero-copy{padding:100px 28px 60px !important}
+}
+@media(max-width:480px){
+  .hero-copy{padding:88px 16px 48px !important}
+}
+
+/* Showcase: override copy-panel padding en mobile */
+@media(max-width:768px){
+  .showcase-copy{padding:40px 24px !important;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center}
+  .showcase-nav-dots,.showcase-side-label{display:none !important}
+}
+@media(max-width:480px){
+  .showcase-copy{padding:32px 16px !important}
+}
+
+/* Editorial grid: 2-col → 1-col en mobile pequeño */
+@media(max-width:600px){
+  .editorial-grid{grid-template-columns:1fr !important}
+  .editorial-big{grid-row:auto !important}
+}
+
+/* Category tiles: 6-col → 3-col → 2-col */
+@media(max-width:900px){.cat-tiles-grid{grid-template-columns:repeat(3,1fr) !important}}
+@media(max-width:480px){.cat-tiles-grid{grid-template-columns:repeat(2,1fr) !important}}
+
+/* Home masonry: 4-col → 3 → 2 */
+@media(max-width:1024px){.home-masonry{column-count:3 !important}}
+@media(max-width:768px){.home-masonry{column-count:2 !important;column-gap:12px !important}}
+
+/* Upload band: 2-col → 1-col; imágenes se ocultan en mobile */
+@media(max-width:768px){
+  .upload-band-grid{grid-template-columns:1fr !important;gap:28px !important}
+  .upload-imgs-grid{display:none !important}
+  .upload-band-grid{padding-top:52px !important;padding-bottom:52px !important}
+}
+@media(max-width:480px){
+  .upload-band-grid{padding-top:40px !important;padding-bottom:40px !important}
+}
+
+/* Checkout forms: 2-col → 1-col en mobile */
+@media(max-width:520px){
+  .form-grid-2{grid-template-columns:1fr !important}
+}
+
+/* Upload page: hero grid + uploader grid */
+@media(max-width:768px){
+  .upl-hero-grid{grid-template-columns:1fr !important;padding-top:100px !important;padding-bottom:52px !important}
+  .upl-hero-collage{display:none !important}
+  .upl-page-grid{grid-template-columns:1fr !important}
+}
 </style>
 
 </head>
@@ -1546,7 +1606,7 @@ function ScrollShowcase(){
       scrollbarWidth:'none',position:'relative'}} id="showcase">
 
       {/* ── Puntos de navegación lateral ── */}
-      <div style={{
+      <div className="showcase-nav-dots" style={{
         position:'fixed',right:28,top:'50%',transform:'translateY(-50%)',
         zIndex:100,display:'flex',flexDirection:'column',gap:10,
         opacity: active >= 0 ? 1 : 0, transition:'opacity .3s'
@@ -1568,7 +1628,7 @@ function ScrollShowcase(){
       </div>
 
       {/* ── Etiqueta de sección visible al entrar ── */}
-      <div style={{
+      <div className="showcase-side-label" style={{
         position:'fixed',left:28,top:'50%',transform:'translateY(-50%) rotate(-90deg)',
         transformOrigin:'center center',
         zIndex:100,fontSize:10,fontWeight:700,letterSpacing:'.18em',
@@ -1625,7 +1685,7 @@ function ScrollShowcase(){
             </div>
 
             {/* Panel copy */}
-            <div style={{
+            <div className="showcase-copy" style={{
               order: imgLeft?1:0,
               padding:'0 64px',
               opacity: visible[i]?1:0,
@@ -1730,11 +1790,10 @@ function Home(){
   return <div className="page">
 
     {/* ── HERO ── split: copy izquierda + dos cuadros reales derecha ── */}
-    <section style={{minHeight:'100vh',display:'grid',gridTemplateColumns:'1fr 1fr',
-      alignItems:'center',background:'#F5F3EF',overflow:'hidden',position:'relative'}}>
+    <section className="hero-split" style={{minHeight:'100vh',background:'#F5F3EF',overflow:'hidden',position:'relative'}}>
 
       {/* Copy lado izquierdo */}
-      <div style={{padding:'120px 64px 80px 72px',zIndex:2}}>
+      <div className="hero-copy" style={{padding:'120px 64px 80px 72px',zIndex:2}}>
         {/* Eyebrow — señal de confianza (sin asistente) */}
         <div style={{display:'inline-flex',alignItems:'center',gap:10,marginBottom:28,padding:'9px 16px',
           background:'var(--surface)',border:'1px solid var(--line)',borderRadius:999,
@@ -1784,7 +1843,7 @@ function Home(){
       </div>
 
       {/* Lado derecho — dos cuadros reales superpuestos */}
-      <div style={{position:'relative',height:'100vh',overflow:'visible',
+      <div className="hero-imgs" style={{position:'relative',height:'100vh',overflow:'visible',
         display:'flex',alignItems:'center',justifyContent:'center'}}>
 
         {/* Cuadro trasero — nebulosa horizontal, ligeramente rotado */}
@@ -1794,7 +1853,7 @@ function Home(){
           width:'72%',
           boxShadow:'0 40px 100px rgba(0,0,0,.22)',
           borderRadius:8,overflow:'hidden',zIndex:1}}>
-          <img src="img/mock/hero2_h1.png" alt="Nebulosa cuadro"
+          <img src="assets/mock/hero2_h1.png" alt="Nebulosa cuadro"
             style={{width:'100%',height:'auto',display:'block'}}/>
         </div>
 
@@ -1805,7 +1864,7 @@ function Home(){
           width:'52%',
           boxShadow:'0 48px 120px rgba(0,0,0,.3)',
           borderRadius:8,overflow:'hidden',zIndex:2}}>
-          <img src="img/mock/hero_v2.png" alt="Skyline cuadro"
+          <img src="assets/mock/hero_v2.png" alt="Skyline cuadro"
             style={{width:'100%',height:'auto',display:'block'}}/>
         </div>
 
@@ -1833,9 +1892,9 @@ function Home(){
       <div className="wrap">
         <SectionHead eyebrow="Los favoritos" title="Lo más buscado ahora" link="Ver todos" onLink={()=>navigate('gallery')}/>
         {editorial.length >= 3 && (
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'auto auto',gap:16}}>
+          <div className="editorial-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'auto auto',gap:16}}>
             {/* Cuadro grande — ocupa 2 filas */}
-            <div style={{gridRow:'1/3',borderRadius:16,overflow:'hidden',cursor:'pointer',position:'relative',
+            <div className="editorial-big" style={{gridRow:'1/3',borderRadius:16,overflow:'hidden',cursor:'pointer',position:'relative',
               boxShadow:'0 8px 32px rgba(0,0,0,.1)'}}
               onClick={()=>navigate('editor',{design:editorial[0]})}>
               <img src={editorial[0].mock.a||editorial[0].mock.comun} alt={editorial[0].name}
@@ -1881,7 +1940,7 @@ function Home(){
     <section style={{paddingBottom:72}}>
       <div className="wrap">
         <SectionHead eyebrow="Explora por fandom" title="Encuentra tu universo"/>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:12}}>
+        <div className="cat-tiles-grid" style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:12}}>
           {catTiles.map(({cat,label,icon,design})=>(
             <div key={cat} onClick={()=>navigate('gallery',{cat})}
               style={{borderRadius:12,overflow:'hidden',cursor:'pointer',position:'relative',
@@ -1905,7 +1964,7 @@ function Home(){
     <section style={{background:'var(--surface)',borderTop:'1px solid var(--line)',padding:'72px 0'}}>
       <div className="wrap">
         <SectionHead eyebrow="2.129 diseños" title="Descubre más" link="Ver catálogo completo" onLink={()=>navigate('gallery')}/>
-        <div style={{columns:4,gap:16,columnFill:'balance'}}>
+        <div className="home-masonry" style={{columns:4,gap:16,columnFill:'balance'}}>
           {masonry.map((d,i)=>{
             const heights=[260,340,240,380,300,260,340,280,360,240,320,300];
             return (
@@ -1973,7 +2032,7 @@ function Home(){
       <div style={{position:'absolute',inset:0,opacity:.06,
         backgroundImage:'radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px)',
         backgroundSize:'32px 32px'}}/>
-      <div className="wrap" style={{padding:'72px 0',display:'grid',
+      <div className="wrap upload-band-grid" style={{padding:'72px 0',display:'grid',
         gridTemplateColumns:'1fr 1fr',gap:48,alignItems:'center',position:'relative'}}>
         <div>
           <span style={{fontSize:11,fontWeight:700,letterSpacing:'.14em',textTransform:'uppercase',
@@ -1994,7 +2053,7 @@ function Home(){
             <Icon n="upload" s={17}/>Subir mi imagen
           </button>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+        <div className="upload-imgs-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
           {uploadStrip.map((d,i)=>(
             <div key={d.id} style={{borderRadius:12,overflow:'hidden',
               aspectRatio: i%2===0?'3/4':'1',
@@ -3833,14 +3892,14 @@ function Checkout(){
       <div className="flex col" style={{gap:28}}>
         <div className="card" style={{padding:24}}>
           <h3 className="h3" style={{marginBottom:18}}>Contacto</h3>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
             {F({label:"Email",ph:"tu@email.com",type:"email",span:true,k:"email",req:true})}
             {F({label:"RUT",ph:"12.345.678-5",span:true,k:"rut",req:true})}
           </div>
         </div>
         <div className="card" style={{padding:24}}>
           <h3 className="h3" style={{marginBottom:18}}>Dirección de envío</h3>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
             {F({label:"Nombre",ph:"Nombre",k:"nombre",req:true})}
             {F({label:"Apellido",ph:"Apellido",k:"apellido",req:true})}
             {F({label:"Dirección",ph:"Calle y número",span:true,k:"dir",req:true})}
@@ -4239,7 +4298,7 @@ function Upload(){
     <section style={{background:'var(--accent)',position:'relative',overflow:'hidden'}}>
       <div style={{position:'absolute',inset:0,opacity:.06,pointerEvents:'none',
         backgroundImage:'radial-gradient(circle at 20% 40%, #fff 1px, transparent 1px)',backgroundSize:'32px 32px'}}/>
-      <div className="wrap" style={{padding:'128px 0 80px',display:'grid',gridTemplateColumns:'1.1fr .9fr',
+      <div className="wrap upl-hero-grid" style={{padding:'128px 0 80px',display:'grid',gridTemplateColumns:'1.1fr .9fr',
         gap:56,alignItems:'center',position:'relative'}}>
         <div>
           <span className="eyebrow" style={{color:'rgba(255,255,255,.55)',display:'block',marginBottom:18}}>Tu imagen, tu cuadro</span>
@@ -4259,7 +4318,7 @@ function Upload(){
           </div>
         </div>
         {/* Collage de muestras */}
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <div className="upl-hero-collage" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
           {samples.map((d,i)=>(
             <div key={d.id} style={{borderRadius:14,overflow:'hidden',
               aspectRatio:i%2===0?'3/4':'1',boxShadow:'0 16px 44px rgba(0,0,0,.3)'}}>
