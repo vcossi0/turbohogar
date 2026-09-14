@@ -993,6 +993,41 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
   .upl-hero-collage{display:none !important}
   .upl-page-grid{grid-template-columns:1fr !important}
 }
+
+/* ── Fix 1: Editor tabs overflow en ≤420px ─────────────────── */
+@media(max-width:420px){
+  .ed-pills-row{justify-content:flex-start !important;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    padding:12px 12px 10px !important}
+  .ed-pills-row::-webkit-scrollbar{display:none}
+  .ed-pills{flex-shrink:0}
+}
+
+/* ── Fix 2: GalleryCard — mostrar overlay en dispositivos touch ─ */
+@media(hover:none){
+  .gallery-card-ov{opacity:1 !important}
+  /* gradiente más suave para que no tape la imagen */
+  .gallery-card-ov{background:linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.05) 60%,transparent 100%) !important}
+}
+
+/* ── Fix 3: Editor preview overlay — apilar en mobile ────────── */
+@media(max-width:640px){
+  .ed-preview-bar{
+    flex-direction:column !important;
+    align-items:stretch !important;
+    padding:28px 14px 14px !important;
+    gap:10px !important;
+  }
+  .ed-preview-cta{
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    width:100%;
+  }
+  .ed-preview-cta > div{text-align:left !important}
+  /* El nombre del diseño ya no necesita maxWidth en mobile */
+  .ed-preview-name{max-width:none !important;font-size:16px !important}
+}
 </style>
 
 </head>
@@ -2414,7 +2449,7 @@ function GalleryCard({d,onQuick}){
             transition:'transform .5s cubic-bezier(.25,.46,.45,.94)',
             transform: hover?'scale(1.07)':'scale(1)'}}/>
         {/* Overlay con info */}
-        <div style={{position:'absolute',inset:0,
+        <div className="gallery-card-ov" style={{position:'absolute',inset:0,
           background:'linear-gradient(to top,rgba(0,0,0,.8) 0%,rgba(0,0,0,.1) 55%,transparent 100%)',
           opacity: hover?1:0, transition:'opacity .3s',
           display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:16}}>
@@ -3247,7 +3282,7 @@ function Editor(){
       {/* LEFT PANEL */}
       <div style={{background:'var(--surface)',borderRight:'1px solid var(--line)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
         {/* floating pill tabs */}
-        <div style={{flex:'none',padding:'16px 18px 14px',display:'flex',justifyContent:'center'}}>
+        <div className="ed-pills-row" style={{flex:'none',padding:'16px 18px 14px',display:'flex',justifyContent:'center'}}>
           <div className="ed-pills">
             {[['galeria','🖼','Galería'],['subir','⬆','Subir mi diseño'],['texto','✏','Texto']].map(([k,e,l])=>(
               <button key={k} className={"ed-pill"+(tab===k?' on':'')} onClick={()=>setTab(k)}>
@@ -3533,7 +3568,7 @@ function Editor(){
           </div>
 
           {/* Info overlay — nombre elegante izquierda, precio+botón derecha */}
-          <div style={{
+          <div className="ed-preview-bar" style={{
             position:'absolute', bottom:0, left:0, right:0, zIndex:10,
             padding:'48px 24px 20px',
             background:'linear-gradient(to top, rgba(0,0,0,.52) 0%, rgba(0,0,0,.2) 60%, transparent 100%)',
@@ -3546,7 +3581,7 @@ function Editor(){
                   color:'rgba(255,255,255,.6)',marginBottom:4}}>
                   {activeDesign.cat}
                 </p>
-                <p style={{fontSize:20,fontWeight:800,color:'#fff',lineHeight:1.2,
+                <p className="ed-preview-name" style={{fontSize:20,fontWeight:800,color:'#fff',lineHeight:1.2,
                   letterSpacing:'-.01em',marginBottom:12,
                   overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:260}}>
                   {activeDesign.name||activeDesign.n||'Tu diseño'}
@@ -3584,7 +3619,7 @@ function Editor(){
             </div>
 
             {/* Precio + botón derecha */}
-            <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:10,flexShrink:0}}>
+            <div className="ed-preview-cta" style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:10,flexShrink:0}}>
               {activeDesign && (
                 <div style={{textAlign:'right'}}>
                   <p style={{fontSize:11,color:'rgba(255,255,255,.55)',marginBottom:2}}>Total</p>
@@ -4219,7 +4254,7 @@ function Contact(){
         ) : <>
           <h3 className="h3" style={{marginBottom:20}}>Envíanos un mensaje</h3>
           <div className="flex col g4">
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+            <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
               <div><label className="field-label">Nombre</label><input className="input" placeholder="Tu nombre"/></div>
               <div><label className="field-label">Email</label><input className="input" type="email" placeholder="tu@email.com"/></div>
             </div>
