@@ -1028,6 +1028,49 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
   /* El nombre del diseño ya no necesita maxWidth en mobile */
   .ed-preview-name{max-width:none !important;font-size:16px !important}
 }
+
+/* ── Fix 5: Barra CTA fija en mobile (Cart + Checkout) ────────── */
+.mob-cta-bar{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  background:rgba(250,250,248,.96);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+  gap:12px;align-items:center;
+  box-shadow:0 -4px 24px rgba(0,0,0,.08);
+}
+@media(max-width:900px){
+  .mob-cta-bar{display:flex}
+  .mob-cta-pad{padding-bottom:80px !important}
+}
+
+/* ── Fix 6: Canvas zoom controls — touch target 44px ─────────── */
+@media(max-width:768px){.cc-btn{width:44px !important;height:44px !important}}
+
+/* ── Fix 7: Newsletter — stack en mobile ─────────────────────── */
+@media(max-width:480px){
+  .newsletter-row{flex-direction:column !important}
+  .newsletter-row .btn{width:100% !important;justify-content:center}
+}
+
+/* ── Fix 8: Header icon-btn — touch target 44px ──────────────── */
+@media(max-width:768px){.icon-btn{width:44px !important;height:44px !important}}
+
+/* ── Fix 9: Editor left panel max-height en mobile ───────────── */
+@media(max-width:900px){
+  .ed-left-panel{max-height:52vh !important;overflow:hidden !important}
+}
+
+/* ── Fix 10: QuickView imagen — reduce minHeight en mobile ───── */
+@media(max-width:760px){
+  .qv-img-wrap{min-height:180px !important}
+  .qv-img-wrap img{min-height:180px !important;max-height:280px;object-fit:cover}
+}
+
+/* ── Fix 12: Testimonials cards — peek más generoso en mobile ── */
+@media(max-width:520px){
+  .testimonial-card{min-width:260px !important;max-width:280px !important}
+}
 </style>
 
 </head>
@@ -1482,7 +1525,7 @@ function Footer(){
         <div>
           <p style={{fontWeight:700,fontSize:14,marginBottom:16}}>Newsletter</p>
           <p className="small muted" style={{marginBottom:14}}>Recibe nuevos diseños y ofertas exclusivas.</p>
-          <div className="flex g2">
+          <div className="flex g2 newsletter-row">
             <input className="input" placeholder="tu@email.com" style={{padding:'11px 14px'}}/>
             <button className="btn btn-primary" style={{flex:'none'}} onClick={()=>addToast('¡Suscrito al newsletter!')}>Suscribirse</button>
           </div>
@@ -2162,7 +2205,7 @@ function Home(){
       <SectionHead eyebrow="Clientes felices" title="Lo que dicen de nosotros"/>
       <div className="scroll-x" style={{gap:20,scrollSnapType:'x mandatory'}}>
         {TESTIMONIALS.map((t,i)=>(
-          <div key={i} className="card" style={{padding:24,minWidth:320,maxWidth:340,flex:'none',scrollSnapAlign:'start'}}>
+          <div key={i} className="card testimonial-card" style={{padding:24,minWidth:320,maxWidth:340,flex:'none',scrollSnapAlign:'start'}}>
             <Stars r={t.r}/>
             <p style={{margin:'14px 0 18px',lineHeight:1.65,fontSize:15}}>"{t.t}"</p>
             <div className="flex ic g3">
@@ -2479,7 +2522,7 @@ function QuickView({d,onClose}){
     <div className="modal qv-modal" style={{width:'100%',maxWidth:900}} onClick={e=>e.stopPropagation()}>
       <button className="modal-close" onClick={onClose}><Icon n="x" s={18}/></button>
       <div className="qv-grid">
-        <div style={{minHeight:300,position:'relative'}}>
+        <div className="qv-img-wrap" style={{minHeight:300,position:'relative'}}>
           <img src={IMG(d.seed,700,800)} alt={d.n} style={{width:'100%',height:'100%',objectFit:'cover',minHeight:340}}/>
         </div>
         <div style={{padding:28}}>
@@ -3280,7 +3323,7 @@ function Editor(){
 
     <div className="editor-split">
       {/* LEFT PANEL */}
-      <div style={{background:'var(--surface)',borderRight:'1px solid var(--line)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+      <div className="ed-left-panel" style={{background:'var(--surface)',borderRight:'1px solid var(--line)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
         {/* floating pill tabs */}
         <div className="ed-pills-row" style={{flex:'none',padding:'16px 18px 14px',display:'flex',justifyContent:'center'}}>
           <div className="ed-pills">
@@ -3699,7 +3742,7 @@ function Cart(){
     </div>
   </div>;
 
-  return <div className="page wrap" style={{paddingTop:96,paddingBottom:70,minHeight:'70vh'}}>
+  return <div className="page wrap mob-cta-pad" style={{paddingTop:96,paddingBottom:70,minHeight:'70vh'}}>
     <Breadcrumbs items={[{label:'Inicio',to:'home'},{label:'Carrito'}]}/>
     <div className="flex ie jb fwrap g3" style={{marginBottom:28}}>
       <h1 className="h1">Tu carrito</h1><span className="muted">{cartItems.length} {cartItems.length===1?'artículo':'artículos'}</span>
@@ -3757,6 +3800,16 @@ function Cart(){
           <div className="prog-bar"><div className="prog-fill" style={{width:pct+'%',background:pct>=100?'var(--success)':'var(--accent)'}}/></div>
         </div>
       </div>
+    </div>
+    {/* Barra CTA fija — solo visible en mobile (≤900px) */}
+    <div className="mob-cta-bar">
+      <div style={{flex:1,minWidth:0}}>
+        <p className="cap muted" style={{marginBottom:2}}>Total</p>
+        <p style={{fontWeight:800,fontSize:17,letterSpacing:'-.01em'}}>{CLP(total)}</p>
+      </div>
+      <button className="btn btn-primary" style={{flex:'none'}} onClick={()=>navigate('checkout')}>
+        Ir a checkout<Icon n="arrowR" s={16}/>
+      </button>
     </div>
   </div>;
 }
@@ -3916,7 +3969,7 @@ function Checkout(){
     },1900);
   };
 
-  return <div className="page wrap" style={{paddingTop:96,paddingBottom:70,minHeight:'70vh'}}>
+  return <div className="page wrap mob-cta-pad" style={{paddingTop:96,paddingBottom:70,minHeight:'70vh'}}>
     <Breadcrumbs items={[{label:'Inicio',to:'home'},{label:'Carrito',to:'cart'},{label:'Checkout'}]}/>
     <div className="flex ic g2" style={{maxWidth:520,marginBottom:34}}>
       <span className="step on"><span className="num">1</span>Envío</span><span className="step-line act"/>
@@ -3969,6 +4022,16 @@ function Checkout(){
     {payOpen && <PaymentModal
       stage={payStage} total={total} card={card} setC={setC} cardErr={cardErr}
       onClose={()=>setPayOpen(false)} onPay={submitPayment}/>}
+    {/* Barra CTA fija — solo visible en mobile (≤900px) */}
+    <div className="mob-cta-bar">
+      <div style={{flex:1,minWidth:0}}>
+        <p className="cap muted" style={{marginBottom:2}}>Total</p>
+        <p style={{fontWeight:800,fontSize:17,letterSpacing:'-.01em'}}>{CLP(total)}</p>
+      </div>
+      <button className="btn btn-primary" style={{flex:'none'}} onClick={goToPay}>
+        Ir a pagar<Icon n="shield" s={16}/>
+      </button>
+    </div>
   </div>;
 }
 
