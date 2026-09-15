@@ -1021,10 +1021,19 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
   .showcase-copy{padding:32px 16px !important}
 }
 
-/* Editorial grid: 2-col → 1-col en mobile pequeño */
+/* Editorial grid → carrusel horizontal en mobile */
 @media(max-width:600px){
-  .editorial-grid{grid-template-columns:1fr !important}
-  .editorial-big{grid-row:auto !important}
+  .editorial-grid{
+    display:flex !important;overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;
+    scrollbar-width:none;gap:12px !important;padding-bottom:6px;
+  }
+  .editorial-grid::-webkit-scrollbar{display:none}
+  .editorial-big,.editorial-grid > div:not(.editorial-big){
+    flex:none !important;width:76vw !important;max-width:272px;
+    scroll-snap-align:start;min-height:200px !important;border-radius:14px !important;
+  }
+  .editorial-big{grid-row:unset !important}
 }
 
 /* Category tiles: 6-col → 3-col → 2-col */
@@ -1134,6 +1143,46 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
 @media(max-width:520px){
   .testimonial-card{min-width:260px !important;max-width:280px !important}
 }
+
+/* ════════════════════════════════════════════════════════════════
+   UX IMPROVEMENTS — navegación, descubrimiento, formularios
+════════════════════════════════════════════════════════════════ */
+
+/* Page fade-in al navegar entre vistas */
+.page{animation:pgIn .2s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* Gallery: altura uniforme en mobile */
+@media(max-width:768px){.gc-img{height:170px !important}}
+
+/* Home masonry "Descubre más" — ocultar en mobile (Gallery cubre este caso) */
+@media(max-width:768px){.home-masonry-section{display:none}}
+
+/* FloatingCTA — botón flotante "Ver diseños" que aparece al bajar */
+.float-cta{
+  display:none;position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%);z-index:88;
+  background:var(--accent);color:#fff;border:none;cursor:pointer;
+  padding:13px 24px;border-radius:999px;font-weight:700;font-size:14px;
+  gap:8px;align-items:center;white-space:nowrap;font-family:inherit;
+  box-shadow:0 8px 28px rgba(27,42,74,.35);
+  animation:floatIn .3s var(--ease);
+}
+@media(max-width:900px){.float-cta{display:inline-flex}}
+@keyframes floatIn{
+  from{opacity:0;transform:translateX(-50%) translateY(14px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+
+/* Checkout: strip compacto de resumen en mobile */
+.mob-order-strip{
+  display:none;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-btn);padding:14px 16px;margin-bottom:20px;
+}
+@media(max-width:900px){.mob-order-strip{display:block}}
+
+/* Gallery search: botón "Buscar" invisible en mobile para no comprimir el input */
+@media(max-width:480px){.gallery-search-btn{display:none}}
 </style>
 
 </head>
@@ -2129,8 +2178,8 @@ function Home(){
       </div>
     </section>
 
-    {/* ── MASONRY "DESCUBRE MÁS" — grid de altura variable ── */}
-    <section style={{background:'var(--surface)',borderTop:'1px solid var(--line)',padding:'72px 0'}}>
+    {/* ── MASONRY "DESCUBRE MÁS" — oculto en mobile (Gallery lo cubre) ── */}
+    <section className="home-masonry-section" style={{background:'var(--surface)',borderTop:'1px solid var(--line)',padding:'72px 0'}}>
       <div className="wrap">
         <SectionHead eyebrow="2.129 diseños" title="Descubre más" link="Ver catálogo completo" onLink={()=>navigate('gallery')}/>
         <div className="home-masonry" style={{columns:4,gap:16,columnFill:'balance'}}>
@@ -2577,7 +2626,7 @@ function GalleryCard({d,onQuick}){
         style={{position:'absolute',top:12,left:12,zIndex:3,fontSize:10}}>
         {d.badge.t}</span>}
 
-      <div style={{height:h,overflow:'hidden',position:'relative'}} onClick={()=>onQuick(d)}>
+      <div className="gc-img" style={{height:h,overflow:'hidden',position:'relative'}} onClick={()=>onQuick(d)}>
         <img src={IMG(d.seed,440,Math.round(h*1.4))} alt={d.n} loading="lazy"
           style={{width:'100%',height:'100%',objectFit:'cover',display:'block',
             transition:'transform .5s cubic-bezier(.25,.46,.45,.94)',
@@ -2649,7 +2698,7 @@ function SkeletonGrid(){
 }
 
 function Gallery(){
-  const {viewData}=useStore();
+  const {viewData,navigate}=useStore();
   const initialCat=(viewData&&viewData.cat&&CATS.indexOf(viewData.cat)>=0)?viewData.cat:'Todos';
   const initialQuery=(viewData&&viewData.query)||'';
   const [cat,setCat]=useState(initialCat);
@@ -2674,6 +2723,12 @@ function Gallery(){
     const results = searchDesigns(query,{cat,orient});
     return results.length ? results : (query||orient ? [] : DESIGNS);
   },[query,cat,orient]);
+
+  // En touch ir directo al editor; en desktop abrir QuickView
+  const handleCardTap = (d)=>{
+    if(navigator.maxTouchPoints > 0) navigate('editor',{design:d});
+    else setQuick(d);
+  };
 
   const totalPages = Math.max(1,Math.ceil(base.length/PER_PAGE));
   const curPage = Math.min(page,totalPages);
@@ -2714,7 +2769,7 @@ function Gallery(){
 
     {loading ? <SkeletonGrid/> : shown.length>0 ? (
       <div className="masonry">
-        {shown.map(d=>(<GalleryCard key={d.id} d={d} onQuick={setQuick}/>))}
+        {shown.map(d=>(<GalleryCard key={d.id} d={d} onQuick={handleCardTap}/>))}
       </div>
     ) : (
       <div style={{textAlign:'center',padding:'80px 24px',background:'linear-gradient(135deg, var(--bg), var(--surface))',borderRadius:12,minHeight:'300px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
@@ -3994,12 +4049,14 @@ function Checkout(){
   // Definir un componente dentro del render y usarlo como <F/> hace que React
   // lo trate como un tipo nuevo en cada keystroke → desmonta el <input/> y se
   // pierde el foco tras cada carácter. Llamarlo como función evita el remount.
-  const F=({label,ph,type='text',span,k,req})=>(
+  const F=({label,ph,type='text',span,k,req,mode,ac})=>(
     <div key={k} style={span?{gridColumn:'1 / -1'}:{}}>
       <label className="field-label">{label}{req && <span style={{color:'var(--error)'}}> *</span>}</label>
       <input className="input" type={type} placeholder={ph} value={f[k]||''}
         onChange={e=>set(k,e.target.value)}
         aria-label={label}
+        inputMode={mode}
+        autoComplete={ac||'off'}
         style={errors[k]?{borderColor:'var(--error)'}:{}}/>
       {errors[k] && <p className="cap" style={{color:'var(--error)',marginTop:4}}>{errors[k]}</p>}
     </div>
@@ -4067,30 +4124,37 @@ function Checkout(){
       <span className="step"><span className="num">2</span>Pago</span><span className="step-line"/>
       <span className="step"><span className="num">3</span>Listo</span>
     </div>
+    {/* Resumen compacto — visible solo en mobile antes del formulario */}
+    <div className="mob-order-strip">
+      <div className="flex ic jb">
+        <span className="small muted">{cartItems.length} {cartItems.length===1?'artículo':'artículos'} · {SHIP.find(s=>s.id===ship)?.n||'Starken'}</span>
+        <span style={{fontWeight:800,fontSize:16}}>{CLP(total)}</span>
+      </div>
+    </div>
     <div className="cart-layout">
       <div className="flex col" style={{gap:28}}>
         <div className="card" style={{padding:24}}>
           <h3 className="h3" style={{marginBottom:18}}>Contacto</h3>
           <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-            {F({label:"Email",ph:"tu@email.com",type:"email",span:true,k:"email",req:true})}
-            {F({label:"RUT",ph:"12.345.678-5",span:true,k:"rut",req:true})}
+            {F({label:"Email",ph:"tu@email.com",type:"email",span:true,k:"email",req:true,mode:"email",ac:"email"})}
+            {F({label:"RUT",ph:"12.345.678-5",span:true,k:"rut",req:true,ac:"off"})}
           </div>
         </div>
         <div className="card" style={{padding:24}}>
           <h3 className="h3" style={{marginBottom:18}}>Dirección de envío</h3>
           <div className="form-grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-            {F({label:"Nombre",ph:"Nombre",k:"nombre",req:true})}
-            {F({label:"Apellido",ph:"Apellido",k:"apellido",req:true})}
-            {F({label:"Dirección",ph:"Calle y número",span:true,k:"dir",req:true})}
-            {F({label:"Departamento / casa (opcional)",ph:"Depto 402",span:true,k:"depto"})}
-            {F({label:"Ciudad",ph:"Ciudad",k:"ciudad",req:true})}
+            {F({label:"Nombre",ph:"Nombre",k:"nombre",req:true,ac:"given-name"})}
+            {F({label:"Apellido",ph:"Apellido",k:"apellido",req:true,ac:"family-name"})}
+            {F({label:"Dirección",ph:"Calle y número",span:true,k:"dir",req:true,ac:"street-address"})}
+            {F({label:"Departamento / casa (opcional)",ph:"Depto 402",span:true,k:"depto",ac:"address-line2"})}
+            {F({label:"Ciudad",ph:"Ciudad",k:"ciudad",req:true,ac:"address-level2"})}
             <div>
               <label className="field-label">Región</label>
               <Dropdown value={region} options={REGIONS} onChange={v=>{setRegion(v);setErrors(e=>({...e,region:undefined}));}} placeholder="Selecciona región" width={'100%'}/>
               {errors.region && <p className="cap" style={{color:'var(--error)',marginTop:4}}>{errors.region}</p>}
             </div>
-            {F({label:"Código postal",ph:"7500000",k:"cp"})}
-            {F({label:"Teléfono",ph:"+56 9 1234 5678",type:"tel",k:"tel",req:true})}
+            {F({label:"Código postal",ph:"7500000",k:"cp",mode:"numeric",ac:"postal-code"})}
+            {F({label:"Teléfono",ph:"+56 9 1234 5678",type:"tel",k:"tel",req:true,mode:"tel",ac:"tel"})}
           </div>
         </div>
         <div className="card" style={{padding:24}}>
@@ -4584,6 +4648,25 @@ function Upload(){
 }
 
 /* ============================================================
+   FLOATING CTA — "Ver diseños" aparece al bajar la página
+============================================================ */
+function FloatingCTA(){
+  const {navigate,view} = useStore();
+  const [show,setShow] = useState(false);
+  useEffect(()=>{
+    if(view!=='home'){setShow(false);return;}
+    const fn = ()=>setShow(window.scrollY > window.innerHeight*0.65);
+    window.addEventListener('scroll',fn,{passive:true});
+    fn();
+    return ()=>window.removeEventListener('scroll',fn);
+  },[view]);
+  if(!show || view!=='home') return null;
+  return <button className="float-cta" onClick={()=>navigate('gallery')}>
+    <Icon n="palette" s={16}/>Ver todos los diseños
+  </button>;
+}
+
+/* ============================================================
    APP ROOT
 ============================================================ */
 function App(){
@@ -4602,6 +4685,7 @@ function App(){
     {!isFull && <Footer/>}
     <Drawer/>
     <SearchOverlay/>
+    <FloatingCTA/>
     <Toasts/>
   </>;
 }
