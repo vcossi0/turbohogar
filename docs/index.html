@@ -938,16 +938,79 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
    RESPONSIVE MOBILE — home sections (inline-style overrides)
 ============================================================ */
 
-/* Hero: la sección usa inline gridTemplateColumns; los breakpoints apuntan a la clase */
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE REDESIGN — "Dos experiencias, un codebase"
+═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Hero: imagen de catálogo propia para mobile ────────────── */
 .hero-split{display:grid;grid-template-columns:1fr 1fr;align-items:center}
+.hero-mobile-img{display:none}
+
 @media(max-width:768px){
-  .hero-split{grid-template-columns:1fr !important;min-height:auto !important}
+  .hero-split{display:flex !important;flex-direction:column !important;min-height:auto !important}
+  .hero-mobile-img{
+    display:block;width:100%;height:56vw;
+    min-height:210px;max-height:310px;
+    overflow:hidden;position:relative;flex:none;
+  }
+  .hero-mobile-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero-mobile-img::after{
+    content:'';position:absolute;bottom:0;left:0;right:0;height:52%;
+    background:linear-gradient(to bottom,transparent,#F5F3EF);
+    pointer-events:none;
+  }
   .hero-imgs{display:none !important}
-  .hero-copy{padding:100px 28px 60px !important}
+  .hero-copy{padding:12px 20px 44px !important}
+  .hero-copy h1{font-size:clamp(26px,7vw,34px) !important;margin-bottom:12px !important;line-height:1.08 !important}
+  .hero-copy > p{font-size:15px !important;margin-bottom:22px !important}
 }
 @media(max-width:480px){
-  .hero-copy{padding:88px 16px 48px !important}
+  .hero-copy{padding:8px 16px 36px !important}
 }
+
+/* ── 2. Spacing: secciones más compactas en mobile ──────────────── */
+@media(max-width:768px){.sect{padding:40px 0 !important}}
+@media(max-width:480px){.sect{padding:32px 0 !important}}
+
+/* ── 3. Category tiles: cuadradas y 3-col en mobile pequeño ─────── */
+@media(max-width:480px){
+  .cat-tiles-grid{grid-template-columns:repeat(3,1fr) !important;gap:8px !important}
+  .cat-tiles-grid > div{aspect-ratio:1 !important}
+}
+
+/* ── 4. Editorial big card: reducir altura mínima en mobile ─────── */
+@media(max-width:600px){.editorial-big img{min-height:240px !important}}
+
+/* ── 5. Showcase: desktop hidden on mobile, carousel shown ──────── */
+.showcase-mobile-wrap{display:none;padding:8px 0 28px}
+@media(max-width:768px){
+  .showcase-desktop{display:none !important;height:0 !important;visibility:hidden !important}
+  .showcase-mobile-wrap{display:block}
+}
+.showcase-mobile-row{
+  display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:x mandatory;scrollbar-width:none;
+  padding:4px 20px 16px;
+}
+.showcase-mobile-row::-webkit-scrollbar{display:none}
+.showcase-mob-card{
+  flex:none;width:74vw;max-width:268px;scroll-snap-align:start;
+  border-radius:14px;overflow:hidden;cursor:pointer;
+  background:var(--surface);border:1px solid var(--line);
+  box-shadow:0 4px 20px rgba(0,0,0,.07);
+  transition:transform .18s var(--ease);
+}
+.showcase-mob-card:active{transform:scale(.97)}
+.showcase-mob-img{height:190px;overflow:hidden}
+.showcase-mob-img img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .4s var(--ease)}
+.showcase-mob-card:hover .showcase-mob-img img{transform:scale(1.04)}
+.showcase-mob-info{padding:14px 16px 16px}
+.showcase-mob-cat{font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.showcase-mob-name{font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px;
+  line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.showcase-mob-price{font-size:12px;color:var(--text-2);margin-bottom:12px;font-weight:600}
 
 /* Showcase: override copy-panel padding en mobile */
 @media(max-width:768px){
@@ -1679,8 +1742,10 @@ function ScrollShowcase(){
   // Fondos alternos suaves para dar variedad entre slides
   const bgs = ['#FAFAF8','#F0EDE8','#FAFAF8','#EEF0F4','#FAFAF8','#F0EDE8'];
 
-  return (
-    <section ref={sectionRef} style={{scrollSnapType:'y mandatory',overflowY:'scroll',height:'100vh',
+  return (<>
+    {/* ── Desktop: full-screen snap scroll (oculto en ≤768px) ── */}
+    <section ref={sectionRef} className="showcase-desktop"
+      style={{scrollSnapType:'y mandatory',overflowY:'scroll',height:'100vh',
       scrollbarWidth:'none',position:'relative'}} id="showcase">
 
       {/* ── Puntos de navegación lateral ── */}
@@ -1816,7 +1881,34 @@ function ScrollShowcase(){
         );
       })}
     </section>
-  );
+
+    {/* ── Mobile: carrusel horizontal (visible solo en ≤768px) ── */}
+    <div className="showcase-mobile-wrap">
+      <div className="wrap" style={{marginBottom:14}}>
+        <p className="eyebrow" style={{marginBottom:4}}>Diseños destacados</p>
+        <p className="small muted">Desliza para explorar</p>
+      </div>
+      <div className="showcase-mobile-row">
+        {slides.map((d,i)=>(
+          <div key={d.id} className="showcase-mob-card"
+            onClick={()=>navigate('editor',{design:d})}>
+            <div className="showcase-mob-img">
+              <img src={d.activeMock} alt={d.sub} loading="lazy"/>
+            </div>
+            <div className="showcase-mob-info">
+              <p className="showcase-mob-cat">{d.cat}</p>
+              <p className="showcase-mob-name">{d.name}</p>
+              <p className="showcase-mob-price">Desde {CLP(14990)}</p>
+              <button className="btn btn-primary btn-sm btn-block"
+                onClick={e=>{e.stopPropagation();navigate('editor',{design:d});}}>
+                Personalizar →
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </>);
 }
 
 function Home(){
@@ -1869,6 +1961,13 @@ function Home(){
 
     {/* ── HERO ── split: copy izquierda + dos cuadros reales derecha ── */}
     <section className="hero-split" style={{minHeight:'100vh',background:'#F5F3EF',overflow:'hidden',position:'relative'}}>
+
+      {/* Imagen mobile-only — catálogo real, visible solo en ≤768px */}
+      <div className="hero-mobile-img">
+        {editorial[0] && <img
+          src={editorial[0].mock.a || editorial[0].mock.comun}
+          alt={editorial[0].name}/>}
+      </div>
 
       {/* Copy lado izquierdo */}
       <div className="hero-copy" style={{padding:'120px 64px 80px 72px',zIndex:2}}>
@@ -1952,14 +2051,6 @@ function Home(){
           zIndex:3,pointerEvents:'none'}}/>
       </div>
 
-      {/* En mobile: un cuadro solo, centrado */}
-      <style>{`
-        @media(max-width:768px){
-          section.hero-split{grid-template-columns:1fr !important; min-height:auto !important;}
-          section.hero-split .hero-imgs{display:none !important;}
-          section.hero-split .hero-copy{padding:100px 28px 60px !important;}
-        }
-      `}</style>
     </section>
 
     {/* ── SCROLL SHOWCASE ── */}
